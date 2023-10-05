@@ -7,7 +7,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(textTheme: GoogleFonts.aBeeZeeTextTheme()),
-      home: MainPage(),
+      home: const MainPage(),
       debugShowCheckedModeBanner: false,
     );
   }
