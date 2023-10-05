@@ -1,3 +1,4 @@
+import 'package:app_viacep_back4app/repositories/cep_back4app_repository.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
   bool loading = false;
   var viaCepModel = ViaCepModel();
   var viaCepRepository = ViaCepRepository();
+  var cepRepository = CepBack4appRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,9 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                     viaCepModel = ViaCepModel();
                     if (cep.trim().length == 8) {
                       viaCepModel = await viaCepRepository.consultarCEP(cep);
+                      print(viaCepModel.toJson());
+                      var teste = await cepRepository.findByCep(cep);
+                      print(teste.toJson());
                     }
 
                     setState(() {
