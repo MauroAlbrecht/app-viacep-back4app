@@ -1,6 +1,6 @@
 import 'package:app_viacep_back4app/models/ceps_back4app_model.dart';
 
-import '../models/via_cep_model.dart';
+import '../models/cep_model.dart';
 import 'dio/back4app_custom_dio.dart';
 
 class CepBack4appRepository {
@@ -19,22 +19,18 @@ class CepBack4appRepository {
     return CepsBack4appModel.fromJson(result.data);
   }
 
-  Future<void> criar(CepModel tarefaModel) async {
+  Future<void> criar(CepModel cepModel) async {
     var url = '/Ceps';
-    await _dioCustom.dio.post(url, data: tarefaModel.toCreateJson());
+    await _dioCustom.dio.post(url, data: cepModel.toCreateJson());
   }
 
-  Future<void> atualizar(CepModel tarefaModel) async {
-    var url = '/Ceps/${tarefaModel.objectId}';
-    await _dioCustom.dio.put(url, data: tarefaModel.toCreateJson());
+  Future<void> atualizar(CepModel cepModel) async {
+    var url = '/Ceps/${cepModel.objectId}';
+    await _dioCustom.dio.put(url, data: cepModel.toCreateJson());
   }
 
-  Future<void> remover(CepModel tarefaModel) async {
-    var url = '/Ceps/${tarefaModel.objectId}';
+  Future<void> remover(CepModel cepModel) async {
+    var url = '/Ceps/${cepModel.objectId}';
     await _dioCustom.dio.delete(url);
-  }
-
-  Future<void> criarCep(ViaCepModel cepModel) async {
-    var cep = CepModel();
   }
 }
