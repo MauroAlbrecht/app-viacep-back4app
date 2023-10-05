@@ -1,9 +1,9 @@
-class CepsModel {
+class CepsBack4appModel {
   List<CepModel>? ceps;
 
-  CepsModel({this.ceps});
+  CepsBack4appModel({this.ceps});
 
-  CepsModel.fromJson(Map<String, dynamic> json) {
+  CepsBack4appModel.fromJson(Map<String, dynamic> json) {
     if (json['results'] != null) {
       ceps = <CepModel>[];
       json['results'].forEach((v) {
@@ -55,7 +55,7 @@ class CepModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['objectId'] = this.objectId;
     data['cep'] = this.cep;
     data['logradouro'] = this.logradouro;

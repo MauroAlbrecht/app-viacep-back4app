@@ -18,9 +18,13 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
     filter: {'#': RegExp(r'[0-9]')},
   );
   bool loading = false;
+
+  //bool verificandoNaBack4app = false;
   var viaCepModel = ViaCepModel();
   var viaCepRepository = ViaCepRepository();
   var cepRepository = CepBack4appRepository();
+  var msgExecutando = '';
+  var cepNaoEncontrado = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,17 +51,36 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                   onChanged: (String val) async {
                     setState(() {
                       loading = true;
+                      msgExecutando = 'Verificando CEP na ViaCep...';
                     });
                     var cep = val.replaceAll(RegExp(r'[^0-9]'), '');
                     viaCepModel = ViaCepModel();
+
                     if (cep.trim().length == 8) {
+                      setState(() {
+                        cepNaoEncontrado = false;
+                      });
                       viaCepModel = await viaCepRepository.consultarCEP(cep);
-                      print(viaCepModel.toJson());
-                      var teste = await cepRepository.findByCep(cep);
-                      print(teste.toJson());
+                      if (viaCepModel.cep != null) {
+                        setState(() {
+                          // verificandoNaBack4app = true;
+                          msgExecutando = 'Verificando CEP na Back4app...';
+                        });
+
+                        var cepBack4app = await cepRepository.findByCep(cep);
+
+                        if (cepBack4app.ceps!.isEmpty) {
+                            await cepRepository.criarCep(viaCepModel);
+                        }
+                      } else {
+                        setState(() {
+                          cepNaoEncontrado = true;
+                        });
+                      }
                     }
 
                     setState(() {
+                      //verificandoNaBack4app = false;
                       loading = false;
                     });
                   },
@@ -74,7 +97,41 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                 '${viaCepModel.localidade ?? ''} ${viaCepModel.localidade != null ? '-' : ''} ${viaCepModel.uf ?? ''}',
                 style: const TextStyle(fontSize: 22),
               ),
-              Visibility(visible: loading, child: const CircularProgressIndicator())
+              //Visibility(visible: loading, child: const CircularProgressIndicator()),
+              const SizedBox(
+                height: 20,
+              ),
+              Visibility(visible: loading, child: const CircularProgressIndicator()),
+              Visibility(
+                visible: cepNaoEncontrado,
+                child: Column(
+                  children: const [
+                    Icon(
+                      Icons.search_off_sharp,
+                      size: 50,
+                      color: Colors.deepOrange,
+                    ),
+                    Text(
+                      'CEP não encontrado, verifique!',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
+              Visibility(
+                visible: loading,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      msgExecutando,
+                      style: const TextStyle(fontSize: 18),
+                    )
+                  ],
+                ),
+              ),
             ],
           ),
         ),
