@@ -244,5 +244,6 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
     ruaController.text = widget.cepModel.logradouro;
     ufController.text = widget.cepModel.uf;
     cidadeController.text = widget.cepModel.localidade;
+    ibgbeController.text = widget.cepModel.ibge;
   }
 }
