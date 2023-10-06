@@ -14,7 +14,7 @@ class CepBack4appRepository {
 
   Future<CepsBack4appModel> findByCep(var cep) async {
     var url = '/Ceps';
-    url = '$url?where={\"cep":$cep}';
+    url = '$url?where={\"cep":\"$cep"}';
     var result = await _dioCustom.dio.get(url);
     return CepsBack4appModel.fromJson(result.data);
   }

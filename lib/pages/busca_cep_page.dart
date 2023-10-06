@@ -18,9 +18,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
     filter: {'#': RegExp(r'[0-9]')},
   );
   bool loading = false;
-
-  //bool verificandoNaBack4app = false;
-  var viaCepModel = CepModel();
+  var viaCepModel = CepModel.vazio();
   var viaCepRepository = ViaCepRepository();
   var cepRepository = CepBack4appRepository();
   var msgExecutando = '';
@@ -49,44 +47,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                   keyboardType: TextInputType.number,
                   controller: cepController,
                   onChanged: (String val) async {
-                    setState(() {
-                      loading = true;
-                      msgExecutando = 'Verificando CEP na ViaCep...';
-                    });
-                    var cep = val.replaceAll(RegExp(r'[^0-9]'), '');
-                    viaCepModel = CepModel();
-
-                    if (cep.trim().length == 8) {
-                      setState(() {
-                        cepNaoEncontrado = false;
-                      });
-                      viaCepModel = await viaCepRepository.consultarCEP(cep);
-                      if (viaCepModel.cep != null) {
-                        setState(() {
-                          // verificandoNaBack4app = true;
-                          msgExecutando = 'Verificando CEP na Back4app...';
-                        });
-
-                        var cepBack4app = await cepRepository.findByCep(cep);
-
-                        if (cepBack4app.ceps!.isEmpty) {
-                          setState(() {
-                            // verificandoNaBack4app = true;
-                            msgExecutando = 'Criando CEP no Back4app...';
-                          });
-                            await cepRepository.criar(viaCepModel);
-                        }
-                      } else {
-                        setState(() {
-                          cepNaoEncontrado = true;
-                        });
-                      }
-                    }
-
-                    setState(() {
-                      //verificandoNaBack4app = false;
-                      loading = false;
-                    });
+                    await verificaCEP(val);
                   },
                 ),
               ),
@@ -98,7 +59,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                 style: const TextStyle(fontSize: 22),
               ),
               Text(
-                '${viaCepModel.localidade ?? ''} ${viaCepModel.localidade != null ? '-' : ''} ${viaCepModel.uf ?? ''}',
+                '${viaCepModel.localidade ?? ''} ${viaCepModel.cep.isNotEmpty ? '-' : ''} ${viaCepModel.uf ?? ''}',
                 style: const TextStyle(fontSize: 22),
               ),
               //Visibility(visible: loading, child: const CircularProgressIndicator()),
@@ -141,5 +102,49 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
         ),
       ),
     );
+  }
+
+  Future<void> verificaCEP(String val) async {
+    setState(() {
+      loading = true;
+      msgExecutando = 'Verificando CEP na ViaCep...';
+    });
+    var cep = val.replaceAll(RegExp(r'[^0-9]'), '');
+    if (cep.trim().length == 8) {
+      setState(() {
+        cepNaoEncontrado = false;
+      });
+       viaCepModel = await viaCepRepository.consultarCEP(cep);
+      if (viaCepModel.cep.isNotEmpty) {
+        setState(() {
+          msgExecutando = 'Verificando CEP na Back4app...';
+        });
+
+        var cepBack4app = await cepRepository.findByCep(cep);
+
+        if (cepBack4app.ceps.isEmpty) {
+          setState(() {
+            msgExecutando = 'Criando CEP no Back4app...';
+          });
+          try {
+            await cepRepository.criar(viaCepModel);
+          } catch (e) {
+            setLogin(false);
+          }
+        }
+      } else {
+        setState(() {
+          cepNaoEncontrado = true;
+        });
+      }
+    }
+
+    setLogin(false);
+  }
+
+  void setLogin(bool val) {
+    setState(() {
+      loading = val;
+    });
   }
 }

@@ -9,8 +9,11 @@ class ViaCepRepository {
     var response = await http.get(Uri.parse('https://viacep.com.br/ws/$cep/json/'));
     if (response.statusCode == HttpStatus.ok) {
       var json = jsonDecode(response.body);
+      if(json['erro'] != null){
+        return CepModel.vazio();
+      }
       return CepModel.fromJson(json);
     }
-    return CepModel();
+    return CepModel.vazio();
   }
 }

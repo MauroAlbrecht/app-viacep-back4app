@@ -1,3 +1,4 @@
+import 'package:app_viacep_back4app/pages/edicao_cep_page.dart';
 import 'package:app_viacep_back4app/repositories/cep_back4app_repository.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -20,7 +21,7 @@ class _ListaCepsPageState extends State<ListaCepsPage> {
   );
   bool loading = false;
 
-  var viaCepModel = CepModel();
+  var viaCepModel = CepModel.vazio();
   var viaCepRepository = ViaCepRepository();
   var cepRepository = CepBack4appRepository();
   var msgExecutando = '';
@@ -82,14 +83,24 @@ class _ListaCepsPageState extends State<ListaCepsPage> {
                           itemBuilder: (BuildContext bc, int index) {
                             return Dismissible(
                               key: Key(_ceps.ceps[index].objectId!),
-                              child: ListTile(
-                                title: Text(_ceps.ceps[index].cep!.toString()),
-                                subtitle: Text('${_ceps.ceps[index].localidade!}-${_ceps.ceps[index].uf!}'),
-                                trailing: InkWell(
-                                    child: const Icon(Icons.delete),
-                                    onTap: () {
-                                      remover(index);
-                                    }),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EdicaoCepPage(_ceps.ceps[index]),
+                                    ),
+                                  );
+                                },
+                                child: ListTile(
+                                  title: Text(_ceps.ceps[index].cep!.toString()),
+                                  subtitle: Text('${_ceps.ceps[index].localidade!}-${_ceps.ceps[index].uf!}'),
+                                  trailing: InkWell(
+                                      child: const Icon(Icons.delete),
+                                      onTap: () {
+                                        remover(index);
+                                      }),
+                                ),
                               ),
                               onDismissed: (DismissDirection dis) {
                                 remover(index);
@@ -113,6 +124,12 @@ class _ListaCepsPageState extends State<ListaCepsPage> {
             content: Text(_ceps.ceps[index].cep.toString()),
             actions: [
               TextButton(
+                  onPressed: () async {
+                    carregaCeps();
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Não')),
+              TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                     setLoading(true);
@@ -120,12 +137,6 @@ class _ListaCepsPageState extends State<ListaCepsPage> {
                     carregaCeps();
                   },
                   child: const Text('Sim')),
-              TextButton(
-                  onPressed: () async {
-                    carregaCeps();
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Não')),
             ],
           );
         });
