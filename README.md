@@ -1,20 +1,10 @@
-# app_viacep_back4app
+# APP Desenvolvido em Flutter
 
-A new Flutter project.
+Esse app faz integração com as apis do ViaCep e do Back4app.
 
-## Getting Started
+Quando o usuário informa um cep é consultado a api do ViaCep, caso o cep exista é cadastrado o cep na base de dado do app no servidor da Back4app.
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+No app é possível fazer a edição e exclusão de CEPS.
 
 ![](readme_doc/REC-20231006173951.gif)
 
