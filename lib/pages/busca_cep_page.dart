@@ -33,7 +33,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
           child: Column(
             children: [
               const Text(
-                'Busca de CEPs',
+                'Consulta de CEPs',
                 style: TextStyle(fontSize: 25),
               ),
               Padding(
@@ -137,6 +137,8 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
           cepNaoEncontrado = true;
         });
       }
+    }else{
+      viaCepModel = CepModel.vazio();
     }
 
     setLogin(false);

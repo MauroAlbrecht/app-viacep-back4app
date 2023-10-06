@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../models/cep_model.dart';
+import '../repositories/cep_back4app_repository.dart';
 
 class EdicaoCepPage extends StatefulWidget {
   CepModel cepModel;
@@ -23,6 +23,8 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
   var bairroCotroller = TextEditingController(text: '');
   var siafiController = TextEditingController(text: '');
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+  var cepRepository = CepBack4appRepository();
 
   @override
   void initState() {
@@ -46,10 +48,11 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         readOnly: true,
                         controller: cepController,
                         decoration: const InputDecoration(
+                          filled: true,
                           border: OutlineInputBorder(),
                           label: Text('CEP'),
                         ),
@@ -57,18 +60,29 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         controller: cidadeController,
+                        onSaved: (String? val) {
+                          widget.cepModel.localidade = val!;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text('Cidade'),
                         ),
+                        validator: (val) {
+                          if (val == null || val.trim().isEmpty) {
+                            return 'Campo obrigatório!';
+                          }
+                        },
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         controller: ruaController,
+                        onSaved: (String? val) {
+                          widget.cepModel.logradouro = val!;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text('Rua'),
@@ -77,8 +91,11 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         controller: bairroCotroller,
+                        onSaved: (String? val) {
+                          widget.cepModel.bairro = val!;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text('Bairro'),
@@ -87,8 +104,11 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
+                      child: TextFormField(
                         controller: ibgbeController,
+                        onSaved: (String? val) {
+                          widget.cepModel.ibge = val!;
+                        },
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           label: Text('Código Ibge'),
@@ -100,20 +120,31 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: TextField(
+                            child: TextFormField(
                               controller: ufController,
+                              onSaved: (String? val) {
+                                widget.cepModel.uf = val!;
+                              },
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text('UF'),
                               ),
+                              validator: (val) {
+                                if (val == null || val.trim().isEmpty) {
+                                  return 'Campo obrigatório';
+                                }
+                              },
                             ),
                           ),
                         ),
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: TextField(
+                            child: TextFormField(
                               controller: ddController,
+                              onSaved: (String? val) {
+                                widget.cepModel.ddd = val!;
+                              },
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text('DDD'),
@@ -128,8 +159,11 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: TextField(
+                            child: TextFormField(
                               controller: giaController,
+                              onSaved: (String? val) {
+                                widget.cepModel.gia = val!;
+                              },
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text('GIA'),
@@ -140,8 +174,11 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                         Expanded(
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: TextField(
+                            child: TextFormField(
                               controller: siafiController,
+                              onSaved: (String? val) {
+                                widget.cepModel.siafi = val!;
+                              },
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 label: Text('SIAFI'),
@@ -151,21 +188,25 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
                         ),
                       ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                salvar();
-                              },
-                              child: const Text('Salvar'),
+                    loading
+                        ? const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  salvar();
+                                },
+                                child: const Text(
+                                  'Salvar',
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    )
+                          )
                   ],
                 ),
               ),
@@ -177,8 +218,20 @@ class _EdicaoCepPageState extends State<EdicaoCepPage> {
   void salvar() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
-      //authController.cadastrarUsuario();
+      try {
+        setState(() {
+          loading = true;
+        });
+        cepRepository.atualizar(widget.cepModel);
+        Navigator.pop(context, true);
+        setState(() {
+          loading = false;
+        });
+      } catch (e) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
   }
 

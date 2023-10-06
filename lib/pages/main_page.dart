@@ -38,14 +38,23 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             BottomNavigationBar(
+                iconSize: 35,
+                unselectedFontSize: 15,
+                selectedFontSize: 18,
                 type: BottomNavigationBarType.fixed,
                 onTap: (value) {
                   controller.jumpToPage(value);
                 },
                 currentIndex: posicaoPagina,
                 items: const [
-                  BottomNavigationBarItem(label: "Consulta", icon: Icon(Icons.search)),
-                  BottomNavigationBarItem(label: "Cadastros", icon: Icon(Icons.person_outline_outlined)),
+                  BottomNavigationBarItem(
+                    label: "Consulta",
+                    icon: Icon(Icons.search),
+                  ),
+                  BottomNavigationBarItem(
+                    label: "Cadastrados",
+                    icon: Icon(Icons.playlist_add_check_outlined),
+                  ),
                 ])
           ],
         ),
