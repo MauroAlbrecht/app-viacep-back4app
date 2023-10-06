@@ -1,6 +1,8 @@
 import 'package:app_viacep_back4app/pages/busca_cep_page.dart';
 import 'package:flutter/material.dart';
 
+import 'lista_ceps_page.dart';
+
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -31,7 +33,7 @@ class _MainPageState extends State<MainPage> {
                 },
                 children: [
                   BuscaCepPage(),
-                  BuscaCepPage(),
+                  ListaCepsPage(),
                 ],
               ),
             ),

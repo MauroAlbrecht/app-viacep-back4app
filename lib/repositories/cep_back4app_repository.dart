@@ -21,6 +21,7 @@ class CepBack4appRepository {
 
   Future<void> criar(CepModel cepModel) async {
     var url = '/Ceps';
+    print(cepModel.toCreateJson());
     await _dioCustom.dio.post(url, data: cepModel.toCreateJson());
   }
 

@@ -3,7 +3,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import 'package:flutter/material.dart';
 
-import '../models/via_cep_model.dart';
+import '../models/cep_model.dart';
 import '../repositories/via_cep_repository.dart';
 
 class BuscaCepPage extends StatefulWidget {
@@ -20,7 +20,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
   bool loading = false;
 
   //bool verificandoNaBack4app = false;
-  var viaCepModel = ViaCepModel();
+  var viaCepModel = CepModel();
   var viaCepRepository = ViaCepRepository();
   var cepRepository = CepBack4appRepository();
   var msgExecutando = '';
@@ -54,7 +54,7 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                       msgExecutando = 'Verificando CEP na ViaCep...';
                     });
                     var cep = val.replaceAll(RegExp(r'[^0-9]'), '');
-                    viaCepModel = ViaCepModel();
+                    viaCepModel = CepModel();
 
                     if (cep.trim().length == 8) {
                       setState(() {
@@ -70,7 +70,11 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                         var cepBack4app = await cepRepository.findByCep(cep);
 
                         if (cepBack4app.ceps!.isEmpty) {
-                            await cepRepository.criarCep(viaCepModel);
+                          setState(() {
+                            // verificandoNaBack4app = true;
+                            msgExecutando = 'Criando CEP no Back4app...';
+                          });
+                            await cepRepository.criar(viaCepModel);
                         }
                       } else {
                         setState(() {
@@ -108,12 +112,12 @@ class _BuscaCepPageState extends State<BuscaCepPage> {
                   children: const [
                     Icon(
                       Icons.search_off_sharp,
-                      size: 50,
+                      size: 45,
                       color: Colors.deepOrange,
                     ),
                     Text(
                       'CEP não encontrado, verifique!',
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 18),
                     ),
                   ],
                 ),
